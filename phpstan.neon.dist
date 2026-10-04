@@ -1,0 +1,8 @@
+parameters:
+    level: 6
+    paths:
+        - src
+    tmpDir: build/phpstan
+    # Saloon's Response::json() is `mixed` in de signature maar belooft array in
+    # de docblock. De runtime-guard blijft, dus phpdoc is hier geen bewijs.
+    treatPhpDocTypesAsCertain: false
