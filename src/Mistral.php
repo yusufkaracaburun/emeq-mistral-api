@@ -23,6 +23,7 @@ class Mistral
 
     public function __construct(
         private readonly MistralCredentialResolver $resolver,
+        private readonly int $timeoutSeconds = 300,
     ) {}
 
     public function ocr(Document $document, string $model): OcrResult
@@ -57,7 +58,7 @@ class Mistral
 
     private function connector(): MistralConnector
     {
-        return $this->connector ??= new MistralConnector($this->apiKey());
+        return $this->connector ??= new MistralConnector($this->apiKey(), $this->timeoutSeconds);
     }
 
     private function apiKey(): string

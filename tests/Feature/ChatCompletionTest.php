@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use Emeq\MistralApi\Data\ChatMessage;
 use Emeq\MistralApi\Data\Document;
+use Emeq\MistralApi\Mistral;
+use Emeq\MistralApi\Tests\Support\StaticCredentialResolver;
 use Saloon\Http\Faking\MockClient;
 use Saloon\Http\Faking\MockResponse;
 
@@ -114,4 +116,15 @@ it('stuurt een object-schema ongewijzigd op de wire, lege objecten blijven {}', 
 
     expect($wire)->toContain('"schema":{"type":"object","properties":{}}')
         ->and($wire)->not->toContain('"properties":[]');
+});
+
+it('stuurt requests met de timeout die de host aan Mistral meegeeft', function (): void {
+    $mock = MockClient::global([MockResponse::make(chatResponse()), MockResponse::make(chatResponse())]);
+
+    (new Mistral(new StaticCredentialResolver(TEST_API_KEY), timeoutSeconds: 150))
+        ->chat('fake-chat-model', [ChatMessage::user('x')], 'weekstaat', weekstaatSchema());
+    mistral()->chat('fake-chat-model', [ChatMessage::user('x')], 'weekstaat', weekstaatSchema());
+
+    expect(sentRequests($mock)[0]->config()->get('timeout'))->toBe(150)
+        ->and(sentRequests($mock)[1]->config()->get('timeout'))->toBe(300);
 });

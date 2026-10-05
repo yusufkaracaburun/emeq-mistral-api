@@ -14,6 +14,8 @@ use Emeq\MistralApi\Contracts\MistralCredentialResolver;
 $this->app->bind(MistralCredentialResolver::class, HubMistralCredentialResolver::class);
 ```
 
+De request-timeout is standaard 300 seconden. Een andere waarde zet de host door `Mistral` zelf te binden: `new Mistral($app->make(MistralCredentialResolver::class), timeoutSeconds: 150)`.
+
 ## Gebruik
 
 ```php
